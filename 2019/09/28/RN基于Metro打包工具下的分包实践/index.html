@@ -43,7 +43,7 @@
 <meta property="og:site_name" content="浅录">
 <meta property="og:description" content="为什么要做拆包业务？  模块化工程实现，随着业务的拓展和深入，业务涉及的庞大后，每个模块应该作为一个单独的工程来进行维护，并可由单人负责到位指定模块功能。  业务包大小；业务包大小随着业务功能庞大变大；总的来说一是有些功能在使用上可能没有被用户用到或是可以在用户使用到的时候进行异步加载。二是包的大小直接体现在页面的响应速度上，虽然这部分随着设备性能上的提升，影响正在慢慢减弱。">
 <meta property="og:locale" content="zh">
-<meta property="og:updated_time" content="2019-09-28T02:58:22.824Z">
+<meta property="og:updated_time" content="2019-09-28T03:29:19.269Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="RN基于Metro打包工具下的分包实践">
 <meta name="twitter:description" content="为什么要做拆包业务？  模块化工程实现，随着业务的拓展和深入，业务涉及的庞大后，每个模块应该作为一个单独的工程来进行维护，并可由单人负责到位指定模块功能。  业务包大小；业务包大小随着业务功能庞大变大；总的来说一是有些功能在使用上可能没有被用户用到或是可以在用户使用到的时候进行异步加载。二是包的大小直接体现在页面的响应速度上，虽然这部分随着设备性能上的提升，影响正在慢慢减弱。">
@@ -138,6 +138,29 @@
 </li>
 </ul>
 <a id="more"></a>
+
+<p><a href="https://facebook.github.io/metro/" target="_blank" rel="noopener">Metro</a></p>
+<p>官方打包工具，从RN 0.57版本开始默认引入进来，在我们使用react-native bundle命令的时候直接就调用Metro进行我们的rn bundle打包工作；所以基于 Metro的拆包，理论上会有“官方”保证。</p>
+<p>Metro的配置方式：</p>
+<ul>
+<li>metro.config.js</li>
+<li>metro.config.json</li>
+<li>The <code>metro</code> field in <code>package.json</code>（在package.json中配置metro相关属性）</li>
+<li>通过打包命令的–config指定配置文件，文件命名随意</li>
+</ul>
+<p>实现</p>
+<p>demo实现方式主要基于<a href="https://github.com/smallnew/react-native-multibundler" target="_blank" rel="noopener"><strong>react-native-multibundler</strong></a></p>
+<p>通过metro拆完业务包后，在原声实现部分需对业务包进行动态加载；demo中已实现这部分功能</p>
+<p>这边关于打包，主要是针对模块化中对moduleId配置以及打包文件过滤规则的配置，对应配置信息为：</p>
+<ul>
+<li><strong>createModuleIdFactory</strong></li>
+<li><strong>processModuleFilter</strong></li>
+</ul>
+<p>对于ModuleId，每个业务模块（包括基础模块）的文件id为起始id（可配置）的遍历递增，及后续的增量递增；</p>
+<p>通过配置起始id可达到各个模块的id的分段；确保了各个业务模块的moduleid隔离</p>
+<p>对于Filter部分，则比较好的理解，按打包顺序确认指定依赖或是文件是否已存在（在别的模块、自己模块等）</p>
+<p>具体实现详见<a href="https://github.com/lhlhlh111000/rn-multi-bundle" target="_blank" rel="noopener">demo</a></p>
+
             </div>
           
 
