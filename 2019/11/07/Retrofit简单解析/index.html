@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang>
+  <head><meta name="generator" content="Hexo 3.9.0">
+    
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width,user-scalable=no,initial-scale=1,minimum-scale=1,maximum-scale=1">
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+  <meta name="description" content="Retrofit简单解析">
+
+
+
+
+  <meta name="keywords" content="retrofit,proxy,注解,">
+
+
+
+
+
+  <link rel="alternate" href="/default" title="浅录">
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=1.1">
+
+
+
+<link rel="canonical" href="http://yoursite.com/2019/11/07/Retrofit简单解析/">
+
+
+<meta name="description" content="Retrofit算下出现的时间也已经好几年了，为什么今天还要做这篇解析呢？早先出去面试时其实有被问到实现原理，鉴于当时的理解只是说了基于注解实现，没有真的翻阅源码，所以就没有接着往下聊了。 最近回想到过来， 翻看了Retrofit源码；所以写下这篇做下记录…">
+<meta name="keywords" content="retrofit,proxy,注解">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Retrofit简单解析">
+<meta property="og:url" content="http://yoursite.com/2019/11/07/Retrofit简单解析/index.html">
+<meta property="og:site_name" content="浅录">
+<meta property="og:description" content="Retrofit算下出现的时间也已经好几年了，为什么今天还要做这篇解析呢？早先出去面试时其实有被问到实现原理，鉴于当时的理解只是说了基于注解实现，没有真的翻阅源码，所以就没有接着往下聊了。 最近回想到过来， 翻看了Retrofit源码；所以写下这篇做下记录…">
+<meta property="og:locale" content="zh">
+<meta property="og:updated_time" content="2019-11-07T02:19:10.331Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Retrofit简单解析">
+<meta name="twitter:description" content="Retrofit算下出现的时间也已经好几年了，为什么今天还要做这篇解析呢？早先出去面试时其实有被问到实现原理，鉴于当时的理解只是说了基于注解实现，没有真的翻阅源码，所以就没有接着往下聊了。 最近回想到过来， 翻看了Retrofit源码；所以写下这篇做下记录…">
+
+
+<link rel="stylesheet" type="text/css" href="/css/style.css?v=1.1">
+<link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
+
+
+
+
+
+<script type="text/javascript">
+  var themeConfig = {
+    fancybox: {
+      enable: false
+    },
+  };
+</script>
+
+
+
+
+  
+
+
+
+    <title> Retrofit简单解析 - 浅录 </title>
+  </head>
+
+  <body>
+    <div id="page">
+      <header id="masthead"><div class="site-header-inner">
+    <h1 class="site-title">
+        <a href="/." class="logo">浅录</a>
+    </h1>
+
+    <nav id="nav-top">
+        
+            <ul id="menu-top" class="nav-top-items">
+                
+                    <li class="menu-item">
+                        <a href="/archives">
+                            
+                            
+                                归档
+                            
+                        </a>
+                    </li>
+                
+                    <li class="menu-item">
+                        <a href="/about">
+                            
+                            
+                                关于
+                            
+                        </a>
+                    </li>
+                
+            </ul>
+        
+  </nav>
+</div>
+
+      </header>
+      <div id="content">
+        
+    <div id="primary">
+        
+  <article class="post">
+    <header class="post-header">
+      <h1 class="post-title">
+        
+          Retrofit简单解析
+        
+      </h1>
+
+      <time class="post-time">
+          Nov 07 2019
+      </time>
+    </header>
+
+
+
+    
+            <div class="post-content">
+            <p>Retrofit算下出现的时间也已经好几年了，为什么今天还要做这篇解析呢？早先出去面试时其实有被问到实现原理，鉴于当时的理解只是说了基于注解实现，没有真的翻阅源码，所以就没有接着往下聊了。</p>
+<p>最近回想到过来， 翻看了Retrofit源码；所以写下这篇做下记录…</p>
+<a id="more"></a>
+
+<p><strong>Retrofit是什么</strong></p>
+<p>理解上就是一个网络库，基于okhttp包装；提供了一些简洁的api调用方式进行restful api请求。</p>
+
+            </div>
+          
+
+    
+      <footer class="post-footer">
+		
+		<div class="post-tags">
+		  
+			<a href="/tags/retrofit/">retrofit</a>
+		  
+			<a href="/tags/proxy/">proxy</a>
+		  
+			<a href="/tags/注解/">注解</a>
+		  
+		</div>
+		
+
+        
+        
+  <nav class="post-nav">
+    
+    
+      <a class="next" href="/2019/09/28/RN基于Metro打包工具下的分包实践/">
+        <span class="next-text nav-default">RN基于Metro打包工具下的分包实践</span>
+        <span class="prev-text nav-mobile">Next</span>
+        <i class="iconfont icon-right"></i>
+      </a>
+    
+  </nav>
+
+        
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+      </footer>
+    
+  </article>
+
+    </div>
+
+      </div>
+
+      <footer id="colophon"><span class="copyright-year">
+    
+        &copy;
+    
+        2014 -
+    
+    2019
+    <span class="footer-author">John Doe.</span>
+    <span class="power-by">
+        Powered by <a class="hexo-link" href="https://hexo.io/">Hexo</a> and <a class="theme-link" href="https://github.com/frostfan/hexo-theme-polarbear">Polar Bear</a>
+    </span>
+</span>
+
+      </footer>
+
+      <div class="back-to-top" id="back-to-top">
+        <i class="iconfont icon-up"></i>
+      </div>
+    </div>
+    
+
+
+    
+
+
+
+
+  
+    <script type="text/javascript" src="/lib/jquery/jquery-3.1.1.min.js"></script>
+  
+
+  
+
+    <script type="text/javascript" src="/js/src/theme.js?v=1.1"></script>
+<script type="text/javascript" src="/js/src/bootstrap.js?v=1.1"></script>
+
+  </body>
+</html>
