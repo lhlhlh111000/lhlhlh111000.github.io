@@ -44,7 +44,8 @@
 <meta property="og:description" content="Retrofit算下出现的时间也已经好几年了，为什么今天还要做这篇解析呢？早先出去面试时其实有被问到实现原理，鉴于当时的理解只是说了基于注解实现，没有真的翻阅源码，回答肯定不能令别人满意，所以就没有接着往下聊了。 最近回想过来， 翻看了下Retrofit源码；所以写下这篇做下记录…">
 <meta property="og:locale" content="zh">
 <meta property="og:image" content="http://yoursite.com/images/retrofit/1.jpg">
-<meta property="og:updated_time" content="2019-11-07T03:28:07.077Z">
+<meta property="og:image" content="http://yoursite.com/images/retrofit/2.jpg">
+<meta property="og:updated_time" content="2019-11-07T03:50:54.535Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Retrofit简单解析">
 <meta name="twitter:description" content="Retrofit算下出现的时间也已经好几年了，为什么今天还要做这篇解析呢？早先出去面试时其实有被问到实现原理，鉴于当时的理解只是说了基于注解实现，没有真的翻阅源码，回答肯定不能令别人满意，所以就没有接着往下聊了。 最近回想过来， 翻看了下Retrofit源码；所以写下这篇做下记录…">
@@ -173,6 +174,16 @@
 </li>
 </ul>
 <p><strong>源码解析</strong></p>
+<p>先看下入口方法，直接是一个动态代理实现：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> &lt;T&gt; <span class="function">T <span class="title">create</span><span class="params">(<span class="keyword">final</span> Class&lt;T&gt; service)</span> </span>&#123;</span><br><span class="line">  <span class="comment">// 合法性校验</span></span><br><span class="line">  validateServiceInterface(service);</span><br><span class="line">  <span class="keyword">return</span> (T) Proxy.newProxyInstance(service.getClassLoader(), <span class="keyword">new</span> Class&lt;?&gt;[] &#123; service &#125;,</span><br><span class="line">      <span class="keyword">new</span> InvocationHandler() &#123;</span><br><span class="line">        <span class="keyword">private</span> <span class="keyword">final</span> Platform platform = Platform.get();</span><br><span class="line">        <span class="keyword">private</span> <span class="keyword">final</span> Object[] emptyArgs = <span class="keyword">new</span> Object[<span class="number">0</span>];</span><br><span class="line"></span><br><span class="line">        <span class="meta">@Override</span> <span class="keyword">public</span> <span class="meta">@Nullable</span> <span class="function">Object <span class="title">invoke</span><span class="params">(Object proxy, Method method,</span></span></span><br><span class="line"><span class="function"><span class="params">            @Nullable Object[] args)</span> <span class="keyword">throws</span> Throwable </span>&#123;</span><br><span class="line">          <span class="comment">// If the method is a method from Object then defer to normal invocation.</span></span><br><span class="line">          <span class="keyword">if</span> (method.getDeclaringClass() == Object.class) &#123;</span><br><span class="line">            <span class="keyword">return</span> method.invoke(<span class="keyword">this</span>, args);</span><br><span class="line">          &#125;</span><br><span class="line">          <span class="keyword">if</span> (platform.isDefaultMethod(method)) &#123;</span><br><span class="line">            <span class="keyword">return</span> platform.invokeDefaultMethod(method, service, proxy, args);</span><br><span class="line">          &#125;</span><br><span class="line">          <span class="comment">// 这边代理service中的方法进行最终方法体的实现</span></span><br><span class="line">          <span class="keyword">return</span> loadServiceMethod(method).invoke(args != <span class="keyword">null</span> ? args : emptyArgs);</span><br><span class="line">        &#125;</span><br><span class="line">      &#125;);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>创建前的合法性校验；不支持非接口类型service、不支持泛型参数等</li>
+<li>根据平台特性处理；其实这边我们应该主要关注Android平台就行了。</li>
+<li>最终loadServiceMethod(method).invoke(args != null ? args : emptyArgs);实现代理方法</li>
+</ul>
+<p><img src="/images/retrofit/2.jpg" alt></p>
+<p>如上图，整个流程是根据接口Service创建代理Proxy Serivce，最终调用Proxy Service返回值进行请求发起。</p>
 
             </div>
           
