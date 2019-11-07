@@ -44,7 +44,7 @@
 <meta property="og:description" content="Retrofit算下出现的时间也已经好几年了，为什么今天还要做这篇解析呢？早先出去面试时其实有被问到实现原理，鉴于当时的理解只是说了基于注解实现，没有真的翻阅源码，回答肯定不能令别人满意，所以就没有接着往下聊了。 最近回想过来， 翻看了下Retrofit源码；所以写下这篇做下记录…">
 <meta property="og:locale" content="zh">
 <meta property="og:image" content="http://yoursite.com/images/retrofit/1.jpg">
-<meta property="og:updated_time" content="2019-11-07T03:11:30.628Z">
+<meta property="og:updated_time" content="2019-11-07T03:28:07.077Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Retrofit简单解析">
 <meta name="twitter:description" content="Retrofit算下出现的时间也已经好几年了，为什么今天还要做这篇解析呢？早先出去面试时其实有被问到实现原理，鉴于当时的理解只是说了基于注解实现，没有真的翻阅源码，回答肯定不能令别人满意，所以就没有接着往下聊了。 最近回想过来， 翻看了下Retrofit源码；所以写下这篇做下记录…">
@@ -162,8 +162,17 @@
 </ul>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">RequestService service = retrofit.create(RequestService.class);</span><br><span class="line">Call&lt;ResultData&gt; call = service.sendRequest();</span><br><span class="line">call.enqueue(<span class="keyword">new</span> Callback&lt;ResultData&gt;() &#123;</span><br><span class="line">            <span class="comment">//请求成功时回调</span></span><br><span class="line">            <span class="meta">@Override</span></span><br><span class="line">            <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onResponse</span><span class="params">(Call&lt;ResultData&gt; call, Response&lt;ResultData&gt; response)</span> </span>&#123;</span><br><span class="line">                <span class="comment">//处理结果</span></span><br><span class="line">         </span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            <span class="comment">//请求失败时候的回调</span></span><br><span class="line">            <span class="meta">@Override</span></span><br><span class="line">            <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onFailure</span><span class="params">(Call&lt;ResultData&gt; call, Throwable throwable)</span> </span>&#123;</span><br><span class="line">             <span class="comment">//提示失败</span></span><br><span class="line">            &#125;</span><br><span class="line">        &#125;);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 发送网络请求（同步）</span></span><br><span class="line">Response&lt;ResultData&gt; response = call.execute();</span><br></pre></td></tr></table></figure>
 
-<p>通过上述步骤后，我们就完成了一个实质性的网络请求；是不是很简单也很简洁；按我们看下这过程中涉及到的一些模块，先上一下图：</p>
+<p>通过上述步骤后，我们就完成了一个实质性的网络请求；是不是很简单也很简洁；我们看下这过程中涉及到的一些模块，先上一下图：</p>
 <p><img src="/images/retrofit/1.jpg" alt></p>
+<ul>
+<li><p>interface service：定义了请求的基本信息；请求地址、参数、header等，都是通过注解形式进行定义，这边涉及到的注解就不一一展开说明了， 有兴趣的同学可以自己翻看源码或是<a href="https://square.github.io/retrofit/" target="_blank" rel="noopener">官网</a>进行了解</p>
+</li>
+<li><p>CallAdapter、ConverterAdapter： Retrofit通过解析service上method的请求方法上的注解，再根据情况适配请求，CallAdapter做的就是这么个事；而ConvertAdapter则通过适配返回数据进行数据响应的解析。</p>
+</li>
+<li><p>Call、Obserable：为了更好的适配我们项目中使用到的技术栈，callAdapter中会根据service中method返回类型进行适配，这样我们就可以很方便的结合我们自身需求需要的网络发起方式来实现了。所以这就是我要call方式请求方式则是call方式、要rx方式则是rx方式（简单理解适配器模式）。</p>
+</li>
+</ul>
+<p><strong>源码解析</strong></p>
 
             </div>
           
