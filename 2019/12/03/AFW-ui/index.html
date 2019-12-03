@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang>
+  <head><meta name="generator" content="Hexo 3.9.0">
+    
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width,user-scalable=no,initial-scale=1,minimum-scale=1,maximum-scale=1">
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+  <meta name="description" content="AFW-ui">
+
+
+
+
+  <meta name="keywords" content="AFW,">
+
+
+
+
+
+  <link rel="alternate" href="/default" title="浅录">
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=1.1">
+
+
+
+<link rel="canonical" href="http://yoursite.com/2019/12/03/AFW-ui/">
+
+
+<meta name="description" content="提供包括activity、fragment、dialog等一些基础能力的整合和统一对外API的使用；以及Title、Toast、多状态View的统一工具View等。">
+<meta name="keywords" content="AFW">
+<meta property="og:type" content="article">
+<meta property="og:title" content="AFW-ui">
+<meta property="og:url" content="http://yoursite.com/2019/12/03/AFW-ui/index.html">
+<meta property="og:site_name" content="浅录">
+<meta property="og:description" content="提供包括activity、fragment、dialog等一些基础能力的整合和统一对外API的使用；以及Title、Toast、多状态View的统一工具View等。">
+<meta property="og:locale" content="zh">
+<meta property="og:updated_time" content="2019-12-03T03:37:23.197Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="AFW-ui">
+<meta name="twitter:description" content="提供包括activity、fragment、dialog等一些基础能力的整合和统一对外API的使用；以及Title、Toast、多状态View的统一工具View等。">
+
+
+<link rel="stylesheet" type="text/css" href="/css/style.css?v=1.1">
+<link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
+
+
+
+
+
+<script type="text/javascript">
+  var themeConfig = {
+    fancybox: {
+      enable: false
+    },
+  };
+</script>
+
+
+
+
+  
+
+
+
+    <title> AFW-ui - 浅录 </title>
+  </head>
+
+  <body>
+    <div id="page">
+      <header id="masthead"><div class="site-header-inner">
+    <h1 class="site-title">
+        <a href="/." class="logo">浅录</a>
+    </h1>
+
+    <nav id="nav-top">
+        
+            <ul id="menu-top" class="nav-top-items">
+                
+                    <li class="menu-item">
+                        <a href="/archives">
+                            
+                            
+                                归档
+                            
+                        </a>
+                    </li>
+                
+                    <li class="menu-item">
+                        <a href="/about">
+                            
+                            
+                                关于
+                            
+                        </a>
+                    </li>
+                
+            </ul>
+        
+  </nav>
+</div>
+
+      </header>
+      <div id="content">
+        
+    <div id="primary">
+        
+  <article class="post">
+    <header class="post-header">
+      <h1 class="post-title">
+        
+          AFW-ui
+        
+      </h1>
+
+      <time class="post-time">
+          Dec 03 2019
+      </time>
+    </header>
+
+
+
+    
+            <div class="post-content">
+            <p>提供包括activity、fragment、dialog等一些基础能力的整合和统一对外API的使用；以及Title、Toast、多状态View的统一工具View等。</p>
+<a id="more"></a>
+
+<p><strong>页面承载</strong></p>
+<p>这边对activity、fragment、dialog进行抽取提供了统一的API使用，这样方便我们在后续业务实现的时候专注业务部分，以及对这几种页面形态的呈现基本不做实现上的区分，达到一致的开发体验。</p>
+<p>API部分包括：</p>
+<ul>
+<li>obtainContentLayout 内容布局提供者</li>
+<li><del>initParams</del>初始化参数（这边结合router后可废弃）</li>
+<li>setupView 设置view相关</li>
+<li>initViewObservable初始化view状态观察者</li>
+<li>initData数据初始化</li>
+</ul>
+<p>以上为基础承载页面对外提供的统一API，当我们新建一个页面承载的时候都可以按以上初始化步骤进行初始化业务部分代码。</p>
+<p>BaseViewModel这部分代码参照<a href="https://github.com/goldze/MVVMHabit" target="_blank" rel="noopener"><strong>MVVMHabit</strong></a>的mvvm模式进行实现。</p>
+<p><strong>Toast</strong></p>
+<p>吐司提示工具，实现了静态方法直接调用，在任意方法、线程中进行使用</p>
+<p><strong>Title</strong></p>
+<p>标题部分，这部分功能由开发者自行进行选配，如果页面承载部分需要标题，则进行装配，也可以使用Title系列的基础页面承载者作为基础继承。</p>
+<p>在设计之初，想要的是实现可快速插拔实现Title部分；所以抽取一个TitleBarDelegate者进行Title的创建管理等。</p>
+<ul>
+<li>DefaultTitleBarView 提供了一个默认的Title，带一个返回按钮，标题剧中。</li>
+</ul>
+<p>开发者可继承TitleBarView开发特有的Title并集成，方便业务开发。</p>
+<p><strong>多状态View</strong></p>
+<p>在我们业务开发的时候，时常会友网络请求的场景；这时候体现在页面部分，则映射成请求中、请求后；请求后又分成功、失败、错误等。</p>
+<p>StatusDelegate就是扮演的这样一个角色；想象下， 我们多状态View其实不是跟随着基础承载页面而是跟随着业务来的，所以这就期望我们的这个多状态是可以指定绑定对应View的关联，以及可以自定义加载、错误、空等状态页面。</p>
+<p>通过StatusDelegate构建MultiStatusView达成上面所说的实现。</p>
+<ul>
+<li>skeleton 骨架屏的展示，作为loading态的一种；在认知的loading态中骨架屏&gt;loading动画&gt;无反馈，体验反馈呈下降的。所以我认为骨架屏作为加载态还是有必要实现的，然鹅我还没找到方便的实现效果。</li>
+</ul>
+<p>以上，基本以及实现完了一个简易版的ui部分。但是还是有很多可以进行提取的，包括返回事件、findView、列表等。这些个其实已经有很多优秀的第三方框架，我们只需要进行整合集成就行了。</p>
+
+            </div>
+          
+
+    
+      <footer class="post-footer">
+		
+		<div class="post-tags">
+		  
+			<a href="/tags/AFW/">AFW</a>
+		  
+		</div>
+		
+
+        
+        
+  <nav class="post-nav">
+    
+    
+      <a class="next" href="/2019/12/03/AFW-开篇/">
+        <span class="next-text nav-default">AFW-开篇</span>
+        <span class="prev-text nav-mobile">Next</span>
+        <i class="iconfont icon-right"></i>
+      </a>
+    
+  </nav>
+
+        
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+      </footer>
+    
+  </article>
+
+    </div>
+
+      </div>
+
+      <footer id="colophon"><span class="copyright-year">
+    
+        &copy;
+    
+        2014 -
+    
+    2019
+    <span class="footer-author">John Doe.</span>
+    <span class="power-by">
+        Powered by <a class="hexo-link" href="https://hexo.io/">Hexo</a> and <a class="theme-link" href="https://github.com/frostfan/hexo-theme-polarbear">Polar Bear</a>
+    </span>
+</span>
+
+      </footer>
+
+      <div class="back-to-top" id="back-to-top">
+        <i class="iconfont icon-up"></i>
+      </div>
+    </div>
+    
+
+
+    
+
+
+
+
+  
+    <script type="text/javascript" src="/lib/jquery/jquery-3.1.1.min.js"></script>
+  
+
+  
+
+    <script type="text/javascript" src="/js/src/theme.js?v=1.1"></script>
+<script type="text/javascript" src="/js/src/bootstrap.js?v=1.1"></script>
+
+  </body>
+</html>
