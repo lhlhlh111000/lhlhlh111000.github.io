@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang>
+  <head><meta name="generator" content="Hexo 3.9.0">
+    
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width,user-scalable=no,initial-scale=1,minimum-scale=1,maximum-scale=1">
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+  <meta name="description" content="AFW-router">
+
+
+
+
+  <meta name="keywords" content="AFW,">
+
+
+
+
+
+  <link rel="alternate" href="/default" title="浅录">
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=1.1">
+
+
+
+<link rel="canonical" href="http://yoursite.com/2019/12/03/AFW-router/">
+
+
+<meta name="description" content="提供统一的页面跳转、回调、参数解析、协议处理">
+<meta name="keywords" content="AFW">
+<meta property="og:type" content="article">
+<meta property="og:title" content="AFW-router">
+<meta property="og:url" content="http://yoursite.com/2019/12/03/AFW-router/index.html">
+<meta property="og:site_name" content="浅录">
+<meta property="og:description" content="提供统一的页面跳转、回调、参数解析、协议处理">
+<meta property="og:locale" content="zh">
+<meta property="og:updated_time" content="2019-12-03T09:09:18.444Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="AFW-router">
+<meta name="twitter:description" content="提供统一的页面跳转、回调、参数解析、协议处理">
+
+
+<link rel="stylesheet" type="text/css" href="/css/style.css?v=1.1">
+<link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
+
+
+
+
+
+<script type="text/javascript">
+  var themeConfig = {
+    fancybox: {
+      enable: false
+    },
+  };
+</script>
+
+
+
+
+  
+
+
+
+    <title> AFW-router - 浅录 </title>
+  </head>
+
+  <body>
+    <div id="page">
+      <header id="masthead"><div class="site-header-inner">
+    <h1 class="site-title">
+        <a href="/." class="logo">浅录</a>
+    </h1>
+
+    <nav id="nav-top">
+        
+            <ul id="menu-top" class="nav-top-items">
+                
+                    <li class="menu-item">
+                        <a href="/archives">
+                            
+                            
+                                归档
+                            
+                        </a>
+                    </li>
+                
+                    <li class="menu-item">
+                        <a href="/about">
+                            
+                            
+                                关于
+                            
+                        </a>
+                    </li>
+                
+            </ul>
+        
+  </nav>
+</div>
+
+      </header>
+      <div id="content">
+        
+    <div id="primary">
+        
+  <article class="post">
+    <header class="post-header">
+      <h1 class="post-title">
+        
+          AFW-router
+        
+      </h1>
+
+      <time class="post-time">
+          Dec 03 2019
+      </time>
+    </header>
+
+
+
+    
+            <div class="post-content">
+            <p>提供统一的页面跳转、回调、参数解析、协议处理</p>
+<a id="more"></a>
+
+
+
+<p>结合AFW ui库，我们希望我们针对activity、fragment、dialog等有一个统一的跳转方式，甚至包括一些协议的处理，以及参数的传递和解析</p>
+<p><strong>回调</strong></p>
+<p>首先定义回调接口</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">RouterCallBacker</span>&lt;<span class="title">T</span>&gt; </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 回调方法，返回指定信息</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> result</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">callBackResult</span><span class="params">(T result)</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>在发起跳转的时候，根据判断是否有回调者进行关联key的生成并缓存以及向下传递；</p>
+<p>在回调方，直接通过key进行结果回调，这样就简单实现了跳转回调的功能。</p>
+<p><strong>参数传递解析</strong></p>
+<p>因为需要提供一个统一的使用体验，所以在参数传递的时候考虑bundle进行传递；在Activity中通过Intent extra传递，fragment通过arguments传递。</p>
+<p>参数解析的使用；对于传递的参数，其实在业务中只有直接拿来用的需求，所以怎么取值等操作都是重复性的，所以这边利用注解实现了传递值的读取，使得业务可以直接拿来使用。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">static</span> List&lt;Field&gt; <span class="title">parseField</span><span class="params">(Class&lt;?&gt; clazz)</span> </span>&#123;</span><br><span class="line">    List&lt;Field&gt; fields = <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line">    Field[] declaredFields = clazz.getFields();</span><br><span class="line">    <span class="keyword">if</span>(declaredFields.length &gt; <span class="number">0</span>) &#123;</span><br><span class="line">        <span class="keyword">for</span>(Field field : declaredFields) &#123;</span><br><span class="line">            <span class="keyword">if</span>(field.isAnnotationPresent(BindParam.class)) &#123;</span><br><span class="line">                fields.add(field);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> fields;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">setupField</span><span class="params">(Object target, Field field, Bundle bundle)</span> </span>&#123;</span><br><span class="line">    String key = field.getAnnotation(BindParam.class).value();</span><br><span class="line">    trySet(field, target, bundle.get(key));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+            </div>
+          
+
+    
+      <footer class="post-footer">
+		
+		<div class="post-tags">
+		  
+			<a href="/tags/AFW/">AFW</a>
+		  
+		</div>
+		
+
+        
+        
+  <nav class="post-nav">
+    
+    
+      <a class="next" href="/2019/12/03/AFW-ui/">
+        <span class="next-text nav-default">AFW-ui</span>
+        <span class="prev-text nav-mobile">Next</span>
+        <i class="iconfont icon-right"></i>
+      </a>
+    
+  </nav>
+
+        
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+      </footer>
+    
+  </article>
+
+    </div>
+
+      </div>
+
+      <footer id="colophon"><span class="copyright-year">
+    
+        &copy;
+    
+        2014 -
+    
+    2019
+    <span class="footer-author">John Doe.</span>
+    <span class="power-by">
+        Powered by <a class="hexo-link" href="https://hexo.io/">Hexo</a> and <a class="theme-link" href="https://github.com/frostfan/hexo-theme-polarbear">Polar Bear</a>
+    </span>
+</span>
+
+      </footer>
+
+      <div class="back-to-top" id="back-to-top">
+        <i class="iconfont icon-up"></i>
+      </div>
+    </div>
+    
+
+
+    
+
+
+
+
+  
+    <script type="text/javascript" src="/lib/jquery/jquery-3.1.1.min.js"></script>
+  
+
+  
+
+    <script type="text/javascript" src="/js/src/theme.js?v=1.1"></script>
+<script type="text/javascript" src="/js/src/bootstrap.js?v=1.1"></script>
+
+  </body>
+</html>
