@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang>
+  <head><meta name="generator" content="Hexo 3.9.0">
+    
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width,user-scalable=no,initial-scale=1,minimum-scale=1,maximum-scale=1">
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+  <meta name="description" content="SVN转GIT(保留日志)">
+
+
+
+
+  <meta name="keywords" content="git,svn,版本管理,">
+
+
+
+
+
+  <link rel="alternate" href="/default" title="浅录">
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=1.1">
+
+
+
+<link rel="canonical" href="http://yoursite.com/2020/04/02/SVN转GIT-保留日志/">
+
+
+<meta name="description" content="最近在公司接手了几个项目，当初以为接手就接手呗；等到链接发过来之后，发现是通过svn管理的，瞬间有点傻眼了， 好几年没碰svn了；期间以为也只是维护，不想中间遇到临时发版本需求，感觉svn版本管理用起来总是没这么顺心；刚好最近需求清了一波，空出时间来就将几个svn项目都迁移到git管理，顺带记录下。">
+<meta name="keywords" content="git,svn,版本管理">
+<meta property="og:type" content="article">
+<meta property="og:title" content="SVN转GIT(保留日志)">
+<meta property="og:url" content="http://yoursite.com/2020/04/02/SVN转GIT-保留日志/index.html">
+<meta property="og:site_name" content="浅录">
+<meta property="og:description" content="最近在公司接手了几个项目，当初以为接手就接手呗；等到链接发过来之后，发现是通过svn管理的，瞬间有点傻眼了， 好几年没碰svn了；期间以为也只是维护，不想中间遇到临时发版本需求，感觉svn版本管理用起来总是没这么顺心；刚好最近需求清了一波，空出时间来就将几个svn项目都迁移到git管理，顺带记录下。">
+<meta property="og:locale" content="zh">
+<meta property="og:updated_time" content="2020-04-02T09:09:25.312Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="SVN转GIT(保留日志)">
+<meta name="twitter:description" content="最近在公司接手了几个项目，当初以为接手就接手呗；等到链接发过来之后，发现是通过svn管理的，瞬间有点傻眼了， 好几年没碰svn了；期间以为也只是维护，不想中间遇到临时发版本需求，感觉svn版本管理用起来总是没这么顺心；刚好最近需求清了一波，空出时间来就将几个svn项目都迁移到git管理，顺带记录下。">
+
+
+<link rel="stylesheet" type="text/css" href="/css/style.css?v=1.1">
+<link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
+
+
+
+
+
+<script type="text/javascript">
+  var themeConfig = {
+    fancybox: {
+      enable: false
+    },
+  };
+</script>
+
+
+
+
+  
+
+
+
+    <title> SVN转GIT(保留日志) - 浅录 </title>
+  </head>
+
+  <body>
+    <div id="page">
+      <header id="masthead"><div class="site-header-inner">
+    <h1 class="site-title">
+        <a href="/." class="logo">浅录</a>
+    </h1>
+
+    <nav id="nav-top">
+        
+            <ul id="menu-top" class="nav-top-items">
+                
+                    <li class="menu-item">
+                        <a href="/archives">
+                            
+                            
+                                归档
+                            
+                        </a>
+                    </li>
+                
+                    <li class="menu-item">
+                        <a href="/about">
+                            
+                            
+                                关于
+                            
+                        </a>
+                    </li>
+                
+            </ul>
+        
+  </nav>
+</div>
+
+      </header>
+      <div id="content">
+        
+    <div id="primary">
+        
+  <article class="post">
+    <header class="post-header">
+      <h1 class="post-title">
+        
+          SVN转GIT(保留日志)
+        
+      </h1>
+
+      <time class="post-time">
+          Apr 02 2020
+      </time>
+    </header>
+
+
+
+    
+            <div class="post-content">
+            <p>最近在公司接手了几个项目，当初以为接手就接手呗；等到链接发过来之后，发现是通过svn管理的，瞬间有点傻眼了， 好几年没碰svn了；期间以为也只是维护，不想中间遇到临时发版本需求，感觉svn版本管理用起来总是没这么顺心；刚好最近需求清了一波，空出时间来就将几个svn项目都迁移到git管理，顺带记录下。</p>
+<a id="more"></a>
+
+<h3 id="准备"><a href="#准备" class="headerlink" title="准备"></a>准备</h3><ol>
+<li><p>svn的仓库地址，账号密码</p>
+</li>
+<li><p>git的仓库地址，账号密码</p>
+</li>
+<li><p>准备user信息映射文件（目的是为了保留历史commit对应的用户信息）</p>
+</li>
+</ol>
+<blockquote>
+<p>可以在checkout到本地的仓库路径下运行下面命令：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;</span> # svn log --xml | grep author | sort -u | perl -pe 's/.*&gt;(.*?)&lt;.*/$1 = /' &gt; /root/userinfo.txt</span><br><span class="line"><span class="meta">&gt;</span></span><br></pre></td></tr></table></figure>
+</blockquote>
+<blockquote>
+<p>其中userinfo.txt 为输出的svn提交用户列表信息</p>
+</blockquote>
+<h3 id="将svn项目转变成git项目"><a href="#将svn项目转变成git项目" class="headerlink" title="将svn项目转变成git项目"></a>将svn项目转变成git项目</h3><blockquote>
+<p>执行以下命令: </p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;</span> git svn clone [svn仓库地址]  --authors-file=/root/userinfo.txt  --no-metadata [本地存放目录]</span><br><span class="line"><span class="meta">&gt;</span></span><br></pre></td></tr></table></figure>
+</blockquote>
+<h3 id="关联远程分支"><a href="#关联远程分支" class="headerlink" title="关联远程分支"></a>关联远程分支</h3><p>切到本地存放项目目录：</p>
+<blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&gt; git remote add origin [git仓库地址]</span><br><span class="line">&gt; git remote -v</span><br><span class="line">&gt; git push -u origin master</span><br><span class="line">&gt;</span><br></pre></td></tr></table></figure>
+</blockquote>
+<p>至此，项目已经从svn切到git。</p>
+<h3 id="其它"><a href="#其它" class="headerlink" title="其它"></a>其它</h3><ol>
+<li>通过as preferences -&gt; version control 可以直接切换当前项目在idea下版本管理方式</li>
+<li>切换git管理方式后，需关联下远程git仓库：</li>
+</ol>
+<blockquote>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;</span> git init</span><br><span class="line"><span class="meta">&gt;</span> git remote add origin [git地址]</span><br><span class="line"><span class="meta">&gt;</span> git pull origin master</span><br><span class="line"><span class="meta">&gt;</span> git branch --set-upstream-to=origin/master master</span><br><span class="line"><span class="meta">&gt;</span></span><br></pre></td></tr></table></figure>
+</blockquote>
+<p>这过程可能遇到error: The following untracked working tree files would be overwritten by checkout错误，</p>
+<p>解决方式在项目目录下执行以下命令：</p>
+<blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&gt; git clean -d -fx</span><br><span class="line">&gt;</span><br></pre></td></tr></table></figure>
+</blockquote>
+<p>git clean -d -fx表示：删除 一些 没有 git add 的 文件；</p>
+<p>  git clean 参数 </p>
+<p>  -n 显示将要删除的文件和目录；</p>
+<p>  -x —–删除忽略文件已经对git来说不识别的文件</p>
+<p>  -d —–删除未被添加到git的路径中的文件</p>
+<p>  -f —–强制运行</p>
+
+            </div>
+          
+
+    
+      <footer class="post-footer">
+		
+		<div class="post-tags">
+		  
+			<a href="/tags/git/">git</a>
+		  
+			<a href="/tags/svn/">svn</a>
+		  
+			<a href="/tags/版本管理/">版本管理</a>
+		  
+		</div>
+		
+
+        
+        
+  <nav class="post-nav">
+    
+    
+      <a class="next" href="/2020/01/02/2019/">
+        <span class="next-text nav-default">2019</span>
+        <span class="prev-text nav-mobile">Next</span>
+        <i class="iconfont icon-right"></i>
+      </a>
+    
+  </nav>
+
+        
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+      </footer>
+    
+  </article>
+
+    </div>
+
+      </div>
+
+      <footer id="colophon"><span class="copyright-year">
+    
+        &copy;
+    
+        2014 -
+    
+    2020
+    <span class="footer-author">John Doe.</span>
+    <span class="power-by">
+        Powered by <a class="hexo-link" href="https://hexo.io/">Hexo</a> and <a class="theme-link" href="https://github.com/frostfan/hexo-theme-polarbear">Polar Bear</a>
+    </span>
+</span>
+
+      </footer>
+
+      <div class="back-to-top" id="back-to-top">
+        <i class="iconfont icon-up"></i>
+      </div>
+    </div>
+    
+
+
+    
+
+
+
+
+  
+    <script type="text/javascript" src="/lib/jquery/jquery-3.1.1.min.js"></script>
+  
+
+  
+
+    <script type="text/javascript" src="/js/src/theme.js?v=1.1"></script>
+<script type="text/javascript" src="/js/src/bootstrap.js?v=1.1"></script>
+
+  </body>
+</html>
