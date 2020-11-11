@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang>
+  <head><meta name="generator" content="Hexo 3.9.0">
+    
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width,user-scalable=no,initial-scale=1,minimum-scale=1,maximum-scale=1">
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+  <meta name="description" content="Android-NDK入门（一）">
+
+
+
+
+  <meta name="keywords" content="NDK,JNI,">
+
+
+
+
+
+  <link rel="alternate" href="/default" title="浅录">
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=1.1">
+
+
+
+<link rel="canonical" href="http://yoursite.com/2020/11/11/Android-NDK入门（一）/">
+
+
+<meta name="description" content="通过手动向现有项目添加C/C++代码来熟悉NDK的相关工具的配置，目前主要构件方式CMake（CMakeLists)形式。">
+<meta name="keywords" content="NDK,JNI">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Android-NDK入门（一）">
+<meta property="og:url" content="http://yoursite.com/2020/11/11/Android-NDK入门（一）/index.html">
+<meta property="og:site_name" content="浅录">
+<meta property="og:description" content="通过手动向现有项目添加C/C++代码来熟悉NDK的相关工具的配置，目前主要构件方式CMake（CMakeLists)形式。">
+<meta property="og:locale" content="zh">
+<meta property="og:updated_time" content="2020-11-11T09:11:04.038Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Android-NDK入门（一）">
+<meta name="twitter:description" content="通过手动向现有项目添加C/C++代码来熟悉NDK的相关工具的配置，目前主要构件方式CMake（CMakeLists)形式。">
+
+
+<link rel="stylesheet" type="text/css" href="/css/style.css?v=1.1">
+<link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
+
+
+
+
+
+<script type="text/javascript">
+  var themeConfig = {
+    fancybox: {
+      enable: false
+    },
+  };
+</script>
+
+
+
+
+  
+
+
+
+    <title> Android-NDK入门（一） - 浅录 </title>
+  </head>
+
+  <body>
+    <div id="page">
+      <header id="masthead"><div class="site-header-inner">
+    <h1 class="site-title">
+        <a href="/." class="logo">浅录</a>
+    </h1>
+
+    <nav id="nav-top">
+        
+            <ul id="menu-top" class="nav-top-items">
+                
+                    <li class="menu-item">
+                        <a href="/archives">
+                            
+                            
+                                归档
+                            
+                        </a>
+                    </li>
+                
+                    <li class="menu-item">
+                        <a href="/about">
+                            
+                            
+                                关于
+                            
+                        </a>
+                    </li>
+                
+            </ul>
+        
+  </nav>
+</div>
+
+      </header>
+      <div id="content">
+        
+    <div id="primary">
+        
+  <article class="post">
+    <header class="post-header">
+      <h1 class="post-title">
+        
+          Android-NDK入门（一）
+        
+      </h1>
+
+      <time class="post-time">
+          Nov 11 2020
+      </time>
+    </header>
+
+
+
+    
+            <div class="post-content">
+            <p>通过手动向现有项目添加C/C++代码来熟悉NDK的相关工具的配置，目前主要构件方式CMake（CMakeLists)形式。</p>
+<a id="more"></a>
+
+<h3 id="概览"><a href="#概览" class="headerlink" title="概览"></a>概览</h3><ul>
+<li>向现有项目添加C/C++代码</li>
+<li>创建CMake构建脚本（CMakeLists.txt）</li>
+<li>Gradle关联原生库</li>
+</ul>
+<h4 id="添加C-C-代码"><a href="#添加C-C-代码" class="headerlink" title="添加C/C++代码"></a>添加C/C++代码</h4><ol>
+<li>切换Project视图</li>
+<li>module &gt; src&gt;main，新建cpp文件夹目录</li>
+<li>右键cpp目录，New&gt;C/C++ Source File</li>
+<li>输入源文件名称（关联头部文件）</li>
+<li>点击OK结束</li>
+</ol>
+<h4 id="创建CMake脚本"><a href="#创建CMake脚本" class="headerlink" title="创建CMake脚本"></a>创建CMake脚本</h4><ol>
+<li>切换Project视图</li>
+<li>在module模块根目录右键New&gt;File（可调整位置，但是需要注意源码文件相对位置）</li>
+<li>输入文件名<code>CMakeLists.txt</code>，点击OK</li>
+</ol>
+<h4 id="Gradle关联原生库"><a href="#Gradle关联原生库" class="headerlink" title="Gradle关联原生库"></a>Gradle关联原生库</h4><ol>
+<li>切换Project视图</li>
+<li>右键module，选择<code>Link C++ Project with Gradle</code></li>
+<li>选择构建工具方式，CMake/ndk-build（这边使用CMake）</li>
+<li>选择CMakeLists.txt文件所在位置</li>
+<li>点击OK结束</li>
+</ol>
+<ul>
+<li>手动方式，在build.gradle文件中添加配置</li>
+</ul>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">android &#123;</span><br><span class="line">  ...</span><br><span class="line">  defaultConfig &#123;...&#125;</span><br><span class="line">  buildTypes &#123;...&#125;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// Encapsulates your external native build configurations.</span></span><br><span class="line">  externalNativeBuild &#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Encapsulates your CMake build configurations.</span></span><br><span class="line">    cmake &#123; <span class="comment">// 这边也可以设置ndkBuild方式</span></span><br><span class="line"></span><br><span class="line">      <span class="comment">// Provides a relative path to your CMake build script.</span></span><br><span class="line">      path <span class="string">"CMakeLists.txt"</span></span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+            </div>
+          
+
+    
+      <footer class="post-footer">
+		
+		<div class="post-tags">
+		  
+			<a href="/tags/NDK/">NDK</a>
+		  
+			<a href="/tags/JNI/">JNI</a>
+		  
+		</div>
+		
+
+        
+        
+  <nav class="post-nav">
+    
+    
+      <a class="next" href="/2020/04/02/SVN转GIT-保留日志/">
+        <span class="next-text nav-default">SVN转GIT(保留日志)</span>
+        <span class="prev-text nav-mobile">Next</span>
+        <i class="iconfont icon-right"></i>
+      </a>
+    
+  </nav>
+
+        
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+      </footer>
+    
+  </article>
+
+    </div>
+
+      </div>
+
+      <footer id="colophon"><span class="copyright-year">
+    
+        &copy;
+    
+        2014 -
+    
+    2020
+    <span class="footer-author">John Doe.</span>
+    <span class="power-by">
+        Powered by <a class="hexo-link" href="https://hexo.io/">Hexo</a> and <a class="theme-link" href="https://github.com/frostfan/hexo-theme-polarbear">Polar Bear</a>
+    </span>
+</span>
+
+      </footer>
+
+      <div class="back-to-top" id="back-to-top">
+        <i class="iconfont icon-up"></i>
+      </div>
+    </div>
+    
+
+
+    
+
+
+
+
+  
+    <script type="text/javascript" src="/lib/jquery/jquery-3.1.1.min.js"></script>
+  
+
+  
+
+    <script type="text/javascript" src="/js/src/theme.js?v=1.1"></script>
+<script type="text/javascript" src="/js/src/bootstrap.js?v=1.1"></script>
+
+  </body>
+</html>
